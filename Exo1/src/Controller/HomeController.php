@@ -83,4 +83,34 @@ class HomeController extends AbstractController
         ]);
     }
 
+
+     /**
+    * @Route("/home/create", name="home_create")
+    */
+    public function credit(Client $client = null, Request $request, EntityManagerInterface $manager)
+    {
+        if (!$credit) {
+            $credit = new Credit();
+        }
+
+        $form = $this->createForm(FormCreditType::class, $client);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$client->getId()) {
+                
+            }
+
+            $manager->persist($client);
+            $manager->flush();
+
+            return $this->redirectToRoute('home_create', ['id' => $client->getId()]);
+        }
+        return $this->render('home/create.html.twig', [
+            'formClient' => $form->createView(),
+            'current_page' => 'client'
+        ]);
+    }
+
 }
