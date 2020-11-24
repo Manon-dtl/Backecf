@@ -13,12 +13,29 @@ use Symfony\Component\HttpFoundation\Request;
 class HomeController extends AbstractController
 {
     /**
+     * @Route("/home/accueil", name="accueil")
+     */
+    public function accueil()
+    {
+
+        return $this->render('home/accueil.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+
+    /**
      * @Route("/home", name="home")
      */
-    public function index(): Response
+    public function index() : Response
     {
+        $repo = $this->getDoctrine()->getRepository(Client::class);
+
+        $clients = $repo->findAll();
+
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
+            'clients' => $clients
         ]);
     }
 
@@ -52,31 +69,17 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-    /** 
+/**
      * @Route("/home/{id}", name="home_show")
      */
-    public function show (Client $client, Request $request, EntityManagerInterface $manager){
+    public function show($id){
 
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
+        $repo = $this->getDoctrine()->getRepository(Client::class);
 
-        $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
-            $comment->setCreatedAt(new \DateTime())
-                    ->setArticle($client);
-
-            $manager->persist($comment);
-            $manager->flush();
-
-            return $this->redirectToRoute('home_show', ['id'=> $client->getId()
-            ]);
-        }
+        $client = $repo->find($id);
 
         return $this->render('home/show.html.twig', [
-            'client' => $client,
-            'commentForm' => $form->createView()
-        
+            'client' => $client
         ]);
     }
 
