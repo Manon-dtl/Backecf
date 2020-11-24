@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -51,6 +53,16 @@ class Client
      * @ORM\Column(type="integer")
      */
     private $statut_marital;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Credit::class, mappedBy="client")
+     */
+    private $Credit;
+
+    public function __construct()
+    {
+        $this->Credit = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -137,6 +149,36 @@ class Client
     public function setStatutMarital(int $statut_marital): self
     {
         $this->statut_marital = $statut_marital;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Credit[]
+     */
+    public function getCredit(): Collection
+    {
+        return $this->Credit;
+    }
+
+    public function addCredit(Credit $credit): self
+    {
+        if (!$this->Credit->contains($credit)) {
+            $this->Credit[] = $credit;
+            $credit->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCredit(Credit $credit): self
+    {
+        if ($this->Credit->removeElement($credit)) {
+            // set the owning side to null (unless already changed)
+            if ($credit->getClient() === $this) {
+                $credit->setClient(null);
+            }
+        }
 
         return $this;
     }

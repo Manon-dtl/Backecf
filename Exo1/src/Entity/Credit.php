@@ -32,6 +32,12 @@ class Credit
      */
     private $Ref_client;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="Credit")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $client;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +75,18 @@ class Credit
     public function setRefClient(int $Ref_client): self
     {
         $this->Ref_client = $Ref_client;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }
